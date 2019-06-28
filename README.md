@@ -36,7 +36,7 @@
 
     a) Blast transcript sequences known in E. salsugineum with other transcripts
 
-    ```ls -1 transcripts > config && blast.sh config```
+    ```ls -1 transcripts > config && blast.sh $PWD/config```
 
     b) Parse top hit transcript
 6. Align transcript sequences
