@@ -1,3 +1,8 @@
 genomes
 transcripts
 genes
+blast
+config
+test
+*.swp
+*.swo
