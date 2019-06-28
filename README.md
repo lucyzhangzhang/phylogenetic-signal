@@ -33,15 +33,20 @@
     b) Get transcript files from ensemble
 4. Create annotation with existing annotation (RSEM?)
 5. Extract transcript sequences
+
     a) Blast transcript sequences known in E. salsugineum with other transcripts
+
     ```ls -1 transcripts > config && blast.sh config```
 
     b) Parse top hit transcript
 6. Align transcript sequences
 
     ```mafft --phylipout --nuc input > output```
+
 7. Generate tree from alignment - Using RaxML
+
     ```raxmlHPC-PTHREADS -s IPS1.phy -n rax1 -m GTRCAT -o Pp3c11_223 -N 1000 -x 51 -p 51 -k -d -T 5```
+
 8. Calculate phylogenetic signal from R package "phylosignal"
 
 ## Notes:
