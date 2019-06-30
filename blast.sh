@@ -6,12 +6,11 @@ if [[ ! -d $DIR/blast ]]; then
     mkdir $DIR/blast
 fi
 
+if [[ -e $DIR/blast/*.out ]]; then
+    rm $DIR/blast/*.out
+fi
 #Recognize .fasta, .fna, and .fa files
 function blast_genes () {
-
-    if $(ls $DIR/blast/*.out); then
-        rm $DIR/blast/*.out
-    fi
 
     for i in $(ls $2/housekeep/*.f*a* & ls  $2/phos/*.f*a); do
         blastn -query $i -db $1/*.f*a -outfmt 6 -evalue 0.00001 -max_hsps 1 -max_target_seqs 7 -task "dc-megablast" | sort -nrk 4,4 | head -n 1 >> $DIR/blast/dcMega.out

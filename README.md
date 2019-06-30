@@ -12,16 +12,16 @@
 ## Housekeeping genes
 - EF1a
 - Cyclophilin
-- Hsp20.2
+- Hsp90-1
 
-## Organisms:
+## Organisms
 - E. salsugineum
 - A. thaliana
 - O. sativa
 - B. rapa
+- C. rubella
 - B. napus
 - M. trunculata
-- C. reinhardti
 - S. lycopersicum
 - P. patens
 
@@ -39,6 +39,8 @@
     ```ls -1 transcripts > config && blast.sh $PWD/config```
 
     b) Parse top hit transcript
+    c) Manual go through each hit D:
+        i) alternatively, somehow get ThaleMine's Phytozone homologs working (API?)
 6. Align transcript sequences
 
     ```mafft --phylipout --nuc input > output```
