@@ -1,9 +1,15 @@
+#data files
 genomes
 transcripts
 genes
 blast
 config
-test
+alignment
+
+#VIM files
 *.swp
 *.swo
-alignment
+
+#test files
+*.out
+test
