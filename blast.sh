@@ -9,6 +9,7 @@ fi
 if [[ -e $DIR/blast/*.out ]]; then
     rm $DIR/blast/*.out
 fi
+
 #Recognize .fasta, .fna, and .fa files
 function blast_genes () {
 

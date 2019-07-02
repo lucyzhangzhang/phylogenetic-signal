@@ -49,7 +49,8 @@
 
     ```raxmlHPC-PTHREADS -s IPS1.phy -n rax1 -m GTRCAT -o Pp3c11_223 -N 1000 -x 51 -p 51 -k -d -T 5```
 
-8. Calculate phylogenetic signal from R package "phylosignal"
+8. Determine molecular traits of each group: ORF length, GC content, # of exons, transcript length
+9. Calculate phylogenetic signal from R package "phylosignal"
 
 ## Notes:
 * how do we know that these housekeeping genes don't interact with lncRNAs?
