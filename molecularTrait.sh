@@ -12,11 +12,13 @@ function exonNum () {
     # $1=IDfile, $2=GFF, $3.spec
     
     while read gene ID; do
-        if [[ $3 == "$last" ]]; then
+        if [[ $3 == "Zmays" ]]; then
             grep "transcript:$ID" $2 | grep -c 'exon' >> $3.exons
         elif [[ $3 == "Esal" ]]; then
             TrID=$(grep "$ID" $DIR/transcripts/Esal/*.gtf | grep 'exon' | perl -ne '/.*transcript_id "(.*?)".*/ && print("$1\n")' | head -n 1)
             grep "$ID" $DIR/transcripts/Esal/*.gtf | grep 'exon' | grep -c "$TrID" >> $3.exons
+        elif [[ $ID == "MtPIDL1" ]] && [[ $3 == "Mtrunc" ]]; then
+            echo "1" >> $3.exons
         else
             grep "$ID" $2 | grep -c 'exon' >> $3.exons
         fi
@@ -28,9 +30,18 @@ function ORFLen () {
     #sum of all the lengths of the CDS
 
     while read gene ID; do
-        grep "$ID" $2 | grep 'CDS' | awk '{t=$4-$5;print t;}' | sed 's/-//g' | awk '{n+=$1} END {print n}' 
-        grep "$ID" $2 | grep 'CDS' | awk '{t=$4-$5;print t;}' | sed 's/-//g' | awk '{n+=$1} END {print n}' >> $3.ORF
+        if [[ $ID == "MtPDIL1" ]] && [[ $3 == "Mtrunc" ]]; then
+            echo ""
+        else
+            grep $ID $2 > tmp
+            if [[ $(awk '$3=="CDS"' tmp) ]]; then
+                awk '$3=="CDS"' tmp | awk '{t=$4-$5;print t;}' | sed 's/-//g' | awk '{n+=$1} END {print n}' >> $3.ORF
+            else
+                awk '$3=="exon"' tmp | awk '{t=$4-$5;print t;}' | sed 's/-//g' | awk '{n+=$1} END {print n}' >> $3.ORF
+            fi
+        fi
     done < $1
+    rm tmp
 }
 
 function mRNAlen () {
@@ -71,8 +82,6 @@ echo -e "Org\tGene\texonNum\tORFLen\tmRNAlen\tGC" >> $OUT
 
 sed '/^$/d' $DIR/blast/select | awk '{if($0 ~ /^#.*/) name=$0} {sub(/#/,"",name)}  /^#/{close(file);file=$NF} /./{print > name".id"}'
 
-last=$(tail -n 1 $1)
-
 while read spec; do
     echo "Getting traits for $spec"
 
@@ -81,10 +90,10 @@ while read spec; do
     sed -i '/#/d' $spec.id
     IDfile=$spec.id
 
-    exonNum $IDfile $GFF $spec
-    ORFLen $IDfile $GFF $spec
-    mRNAlen $IDfile $GFF $spec
-    GC $IDfile $spec
+    exonNum $IDfile $GFF $spec &
+    ORFLen $IDfile $GFF $spec &
+    mRNAlen $IDfile $GFF $spec &
+    GC $IDfile $spec &
 
     start=1
     end=$(wc -l < $spec.id)
@@ -92,6 +101,8 @@ while read spec; do
     for ((i=start; i<=end; i++)); do
         echo "$spec" >> $spec.name
     done
+    
+    wait 
 
     paste $spec.name $IDfile $spec.exons $spec.ORF $spec.mRNA $spec.GC > $spec.trait
 done < $1

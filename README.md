@@ -23,7 +23,7 @@
 - B. napus
 - M. trunculata
 - S. lycopersicum
-- P. patens
+- Z. Mays (Outgroup)
 
 ## Steps:
 1. Download transcriptomes from SRA
