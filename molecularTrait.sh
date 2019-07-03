@@ -6,6 +6,25 @@
 
 DIR=$(dirname "$1")
 
+function getTranscript () {
+    echo "Getting transcripts..."
+
+    #get transcripts of each gene
+    FA=/home/lucy/scratch/physig/transcripts/$2/*.f*a
+    while read gene ID; do
+        if [[ $ID == "MtPDIL1" ]] && [[ $2 == "Mtrunc" ]]; then
+            cat genes/Mtrunc.IPS1.fa >> $gene.fa
+        elif [[ $2 == "Zmays" ]] && [[ $gene == "IPS1" ]]; then
+            cat genes/Zmays.Zm00001d022669_T001.fa >> $gene.fa
+        elif [[ $2 == "Esal" ]] && [[ $gene == "IPS1" ]]; then 
+            cat genes/Esal.IPS1.XM_024159506.1.fa >> $gene.fa
+        else
+            sed -n "/$ID/,/>/p" $FA | sed '$d' >> $gene.fa
+        fi
+   done < $1
+
+}
+
 function exonNum () {
     echo "Exon number"
     #count of all the exon entries
@@ -14,9 +33,9 @@ function exonNum () {
     while read gene ID; do
         if [[ $3 == "Zmays" ]]; then
             grep "transcript:$ID" $2 | grep -c 'exon' >> $3.exons
-        elif [[ $3 == "Esal" ]]; then
-            TrID=$(grep "$ID" $DIR/transcripts/Esal/*.gtf | grep 'exon' | perl -ne '/.*transcript_id "(.*?)".*/ && print("$1\n")' | head -n 1)
-            grep "$ID" $DIR/transcripts/Esal/*.gtf | grep 'exon' | grep -c "$TrID" >> $3.exons
+#        elif [[ $3 == "Esal" ]]; then
+#            TrID=$(grep "$ID" $DIR/transcripts/Esal/*.gtf | grep 'exon' | perl -ne '/.*transcript_id "(.*?)".*/ && print("$1\n")' | head -n 1)
+#            grep "$ID" $DIR/transcripts/Esal/*.gtf | grep 'exon' | grep -c "$TrID" >> $3.exons
         elif [[ $ID == "MtPIDL1" ]] && [[ $3 == "Mtrunc" ]]; then
             echo "1" >> $3.exons
         else
@@ -30,17 +49,22 @@ function ORFLen () {
     #sum of all the lengths of the CDS
 
     while read gene ID; do
-        if [[ $ID == "MtPDIL1" ]] && [[ $3 == "Mtrunc" ]]; then
-            echo ""
-        else
-            grep $ID $2 > tmp
+#        if [[ $gene == "IPS1" ]]; then
+#            echo "dunno" >> $3.ORF
+#        elif [[ $3 == "Esal" ]]; then
+            #Eutrema is fking special asdfasdfjasdf
+#            TrID=$(grep "$ID" $DIR/transcripts/Esal/*.gtf | grep 'exon' | perl -ne '/.*transcript_id "(.*?)".*/ && print("$1\n")' | head -n 1)
+#            grep "$TrID" $DIR/transcripts/Esal/*.gtf | grep 'exon' | awk '{t=$4=+$5;print t}' | sed 's/-//g' | awk '{n+=$1} END {print n}' >> $3.ORF
+#        else
+        grep $ID $2 > tmp
             if [[ $(awk '$3=="CDS"' tmp) ]]; then
                 awk '$3=="CDS"' tmp | awk '{t=$4-$5;print t;}' | sed 's/-//g' | awk '{n+=$1} END {print n}' >> $3.ORF
             else
                 awk '$3=="exon"' tmp | awk '{t=$4-$5;print t;}' | sed 's/-//g' | awk '{n+=$1} END {print n}' >> $3.ORF
             fi
-        fi
+#        fi
     done < $1
+
     rm tmp
 }
 
@@ -49,9 +73,7 @@ function mRNAlen () {
     #length of the mRNA transcript
 
     while read gene ID; do
-        FILE=$DIR/alignment/$gene.fa
-
-        sed -n "/$ID/,/>/p" $FILE | sed '$d' | wc -c >> $3.mRNA
+        sed -n "/$ID/,/>/p" $gene.fa | sed '$d' | wc -c >> $3.mRNA
     done < $1
 }
 
@@ -60,7 +82,7 @@ function GC () {
     #percentage of G and C for transcript
 
     while read gene ID; do
-        FILE=$DIR/alignment/$gene.fa
+        FILE=$gene.fa
 
         sed -n "/$ID/,/>/p" $FILE | sed '$d' | sed '/>/d' > seq
         AT=$(grep -o '[AT]' seq | wc -l) 
@@ -76,6 +98,9 @@ if [[ -e molecularTrait.out ]]; then
     rm molecularTrait.out
 fi
 
+#remove existing sequence files
+rm *.fa 
+
 OUT=molecularTrait.out
 
 echo -e "Org\tGene\texonNum\tORFLen\tmRNAlen\tGC" >> $OUT
@@ -89,6 +114,8 @@ while read spec; do
 
     sed -i '/#/d' $spec.id
     IDfile=$spec.id
+    
+    getTranscript $IDfile $spec
 
     exonNum $IDfile $GFF $spec &
     ORFLen $IDfile $GFF $spec &

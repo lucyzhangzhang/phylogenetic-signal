@@ -6,10 +6,16 @@ blast
 config
 alignment
 
+#sequence files that accidentally
+#get into the main directory ^_^
+*.fa
+*.phy
+*.nwk
+
 #VIM files
 *.swp
 *.swo
 
 #test files
 *.out
-test
+test*
