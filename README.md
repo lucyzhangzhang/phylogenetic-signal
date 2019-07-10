@@ -53,7 +53,13 @@
 
 7. Generate tree from alignment - Using RaxML
 
-    ```raxmlHPC-PTHREADS -s IPS1.phy -n rax1 -m GTRCAT -o Pp3c11_223 -N 1000 -x 51 -p 51 -k -d -T 5```
+    ```#Parsinomious tree
+        ls *.fa.phy | xargs -i raxmlHPC -f d -m GTRCAT -s {} -n {}.out -p 51
+        #Bootstrapping*
+        ls *.phy | xargs -P 6 -i raxmlHPC -f d -m GTRCAT -s {} -N 1000 -b 51 -p 51 -n {}.bt*
+        #Consensus tree
+        ls *.phy | xargs -P 6 -i raxmlHPC -f b -m GTRCAT -s {} -n {}.cons -z *.boopstrap.{}.bt
+    ```
 
 8. Determine molecular traits of each group: ORF length, GC content, # of exons, transcript length
 9. Calculate phylogenetic signal from R package "phylosignal"

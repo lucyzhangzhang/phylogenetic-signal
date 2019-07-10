@@ -103,7 +103,7 @@ rm *.fa
 
 OUT=molecularTrait.out
 
-echo -e "Org\tGene\texonNum\tORFLen\tmRNAlen\tGC" >> $OUT
+echo -e "Org\tGene\tID\texonNum\tORFLen\tmRNAlen\tGC" >> $OUT
 
 sed '/^$/d' $DIR/blast/select | awk '{if($0 ~ /^#.*/) name=$0} {sub(/#/,"",name)}  /^#/{close(file);file=$NF} /./{print > name".id"}'
 

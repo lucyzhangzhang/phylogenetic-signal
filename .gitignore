@@ -5,6 +5,7 @@ genes
 blast
 config
 alignment
+raxml
 
 #sequence files that accidentally
 #get into the main directory ^_^
@@ -18,4 +19,5 @@ alignment
 
 #test files
 *.out
+*.tab
 test*
