@@ -1,8 +1,8 @@
-#making trees
 library(ape)
 library(seqinr)
 library(phangorn)
 
+#making trees
 setwd("~/scratch/physig/alignment/")
 
 #import files
@@ -26,14 +26,25 @@ gtr <- optim.pml(gtr, model = "GTR", optInv = T, optGamma = T,
 gtr
 
 gtr$tree$tip.label <- paste0(organisms,":Cyclophilin")
-bs <- bootstrap.pml(gtr, bs = 100, control = pml.control(trace = 0))
+# bs <- bootstrap.pml(gtr, bs = 100, control = pml.control(trace = 0))
 
-plot(gtr)
+# plot(gtr)
 
-plotBS(midpoint(gtr$tree), bs, gtr$edge.length, p = 50, type = "p")
+# plotBS(midpoint(gtr$tree), bs, gtr$edge.length, p = 50, type = "p")
 replace <- as.data.frame(cbind(tip=plot$tip.label[[1]], org=paste0(organisms,":Cyclophilin")))
-plot$tip.label[[1]] <- replace[[2]][match(plot$tip.label, replace[[1]])]
-plot$tip.label  <- sapply(plot$tip.label, function(x) parse(text=x))
+# plot$tip.label[[1]] <- replace[[2]][match(plot$tip.label, replace[[1]])]
+# plot$tip.label  <- sapply(plot$tip.label, function(x) parse(text=x))
+
+#visualize trees
+library(ggtree)
+
+tree <- read.newick("../raxml/raxml/RAxML_bipartitionsBranchLabels.tres")
+tree.plot <- { ggtree(tree, aes(x, y), layout = "rectangular")  + geom_tree() +
+  geom_tiplab() + ggplot2::xlim(0, 0.04) +
+  geom_treescale(x=0, y=8.5) + geom_nodelab(vjust=-0.17, hjust=1.1) }
+tree.plot
+ggsave("IPS1.png", IPS1_tree, height=3, width=4, dpi = 200)
+
 
 #phylogenetic signal
 library(picante)
@@ -48,7 +59,7 @@ traits <- read.table("../molecularTrait.out", header = T)
 head(traits,7)
 
 #trees generated from bootstrapping with RAxML
-tree.files <- paste0("RAxML_bipartitionsBranchLabels.",genes,".fa.phy.cons")
+tree <- read.tree("../raxml/raxml/RAxML_bipartitionsBranchLabels.tres")
 
 #get first 10 characters of ID because of stupid phylip :((((((
 traits <- cbind(traits, phyID=substr(traits[ ,3], 1, 10)) 
@@ -60,10 +71,9 @@ BlomK <- NULL
 
 #test pipeline
 for (g in 1:length(genes)) {
-    tree <- read.tree(tree.files[g])
     dat <- dplyr::filter(traits, grepl(genes[g], traits$Gene))
-    rownames(dat) <- dat[,8]
-    dat <- dat[ ,c(8, 4:7)]
+    rownames(dat) <- dat[,1]
+    dat <- dat[ ,c(1, 4:7)]
     phylotraits <- phylo4d(tree, dat[,2:ncol(dat)])
     
     geneName <- genes[g]
@@ -84,7 +94,7 @@ for (g in 1:length(genes)) {
         lambda <- phylosig(tree, trait, method = "lambda", test = T, nsim = 999)
         lambda$P <- ifelse(is.nan(lambda$P), NA, lambda$P)
         Lambda <- rbind(Lambda,c(geneName, traitName, lambda$lambda, lambda$P))
-        
+       
         #Blomberg's K
         #     print("K...")
         if (var(trait) != 0) {
@@ -105,16 +115,19 @@ for (g in 1:length(genes)) {
     colnames(BlomK) <- c("gene", "trait", "K", "Pval")
     colnames(Lambda) <- c("gene", "trait", "lambda", "Pval")
 }
+
+#get data frames
+DF <- {
 Moran2 <- data.frame(Moran, stringsAsFactors = F)
 Moran2$Pval <- as.numeric(Moran2$Pval)
 Moran2$Obs <- as.numeric(Moran2$Obs)
 BlomK2 <- data.frame(BlomK, stringsAsFactors = F)
-BlomK$Pval <- as.numeric(BlomK2$Pval)
-BlomK$K <- as.numeric(BlomK2$K)
+BlomK2$Pval <- as.numeric(BlomK2$Pval)
+BlomK2$K <- as.numeric(BlomK2$K)
 Lambda2 <- data.frame(Lambda, stringsAsFactors = F)
 Lambda2$Pval <- as.numeric(Lambda2$Pval)
 Lambda2$lambda <- as.numeric(Lambda2$lambda)
-
+}
 
 stats <- {
     traits <- c("exonNum", "ORFLen", "mRNAlen", "GC")

@@ -43,15 +43,13 @@
 
     b) Parse top hit transcript
 
-    c) Manual go through each hit D:
-
-        i) alternatively, somehow get ThaleMine's Phytozone homologs working (API?)
+    c) Manual go through each hit D:.i) alternatively, somehow get ThaleMine's Phytozone homologs working (API?)
 
 6. Align transcript sequences
 
     ```mafft --phylipout --nuc input > output```
 
-7. Generate tree from alignment - Using RaxML
+7. Generate tree from alignment using conserved genes - Using RaxML
 
     ```#Parsinomious tree
         ls *.fa.phy | xargs -i raxmlHPC -f d -m GTRCAT -s {} -n {}.out -p 51
@@ -61,8 +59,12 @@
         ls *.phy | xargs -P 6 -i raxmlHPC -f b -m GTRCAT -s {} -n {}.cons -z *.boopstrap.{}.bt
     ```
 
-8. Determine molecular traits of each group: ORF length, GC content, # of exons, transcript length
-9. Calculate phylogenetic signal from R package "phylosignal"
+8. Infer species trees from bootstrap trees generated from conserved genes (consensus tree is a good way to go)
+    
+    a) Don't forget to test for nuclotide model using `jModelTest`
+
+9. Determine molecular traits of each group: ORF length, GC content, # of exons, transcript length
+10. Calculate phylogenetic signal from R package "phylosignal"
 
 ## With regards to *M. truncatula*
 * Conserved region for IPS2 found but not IPS1
