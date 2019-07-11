@@ -38,10 +38,10 @@ replace <- as.data.frame(cbind(tip=plot$tip.label[[1]], org=paste0(organisms,":C
 #visualize trees
 library(ggtree)
 
-tree <- read.newick("../raxml/raxml/RAxML_bipartitionsBranchLabels.tres")
-tree.plot <- { ggtree(tree, aes(x, y), layout = "rectangular")  + geom_tree() +
+tree.bs <- read.newick("../raxml/raxml/RAxML_bipartitions.tres")
+tree.plot <- { ggtree(tree.bs, aes(x, y), layout = "rectangular")  + geom_tree() +
   geom_tiplab() + ggplot2::xlim(0, 0.04) +
-  geom_treescale(x=0, y=8.5) + geom_nodelab(vjust=-0.17, hjust=1.1) }
+  geom_treescale(x=0, y=8.5) + geom_nodelab(vjust=-0.17, hjust=1.4) }
 tree.plot
 ggsave("IPS1.png", IPS1_tree, height=3, width=4, dpi = 200)
 
@@ -131,9 +131,9 @@ Lambda2$lambda <- as.numeric(Lambda2$lambda)
 
 stats <- {
     traits <- c("exonNum", "ORFLen", "mRNAlen", "GC")
-StatsM <- data.frame()
-Statsl <- data.frame()
-StatsK <- data.frame()
+    StatsM <- data.frame()
+    Statsl <- data.frame()
+    StatsK <- data.frame()
     for (i in 1:length(traits)) {
         lambda <- dplyr::filter(Lambda2, grepl(traits[i], Lambda2$trait))
         Statsl <- rbind(Statsl, lambda)
@@ -147,8 +147,30 @@ StatsM
 Statsl
 StatsK
 Combined <- cbind(StatsM, Statsl[, 3:4], StatsK[, 3:4])
+Combined[,3:8] <- format(Combined[,3:8], digits = 4, scientific = T)
 colnames(Combined) <- c("Gene", "Feature", "I", "I:Pval", "l", "l:Pval", "K", "K:Pval")
 head(Combined)
 write.table(Combined, "../Physig.tab", quote = F, sep = " & ", row.names = F, eol = " \\\\ \n")
 write.table(Combined, "../Phyvals.tab", quote = F, sep = " & ", row.names = F, eol = " \\\\ \n")
 
+#Average values
+averages <- {
+    traits <- c("exonNum", "ORFLen", "mRNAlen", "GC")
+Alltrait <- data.frame()
+Comp <- cbind(StatsM, Statsl[, 3:4], StatsK[, 3:4]) 
+colnames(Comp) <- c("Gene", "Feature", "I", "I:Pval", "l", "l:Pval", "K", "K:Pval")
+for (i in 1:length(traits)) {
+    #housekeeping average
+    house <- c("Cyclophilin", "EF1a", "Hsp90") 
+    H.read <- Comp %>% dplyr::filter(grepl(traits[i], Feature)) %>% filter(grepl(paste0(house, collapse = "|"), Gene))
+    H.means <- format(colMeans(H.read[,3:8]), digits = 4, scientific = T)
+    #phosphate genes average
+    pho <- c("SIZ1", "PHR1", "PHO2")
+    P.read <- Comp %>% dplyr::filter(grepl(traits[i], Feature)) %>% filter(grepl(paste0(pho, collapse = "|"), Gene))
+    P.means <- format(colMeans(P.read[,3:8]), digits = 4, scientific = T)
+    
+    pre <- data.frame(Type=c("House", "Pho"), trait=traits[i], rbind(H.means, P.means), stringsAsFactors = F)
+    Alltrait <- rbind(Alltrait, pre)
+
+}
+}

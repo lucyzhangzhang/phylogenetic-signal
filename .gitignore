@@ -21,6 +21,7 @@ raxml
 *.out
 *.tab
 test*
+*sand
 
 #LaTeX files
 *.log
