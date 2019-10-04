@@ -6,13 +6,39 @@
 - SIZ1
 - PHT1
 - RNS1
-- SULTR1
+- SULTR2;1
 - PHF
+- PHOX (*C. reinhardtii*, putative phosphatase)
 
 ## Housekeeping genes
 - EF1a
+- EF1b
+- EF4a
 - Cyclophilin
 - Hsp90-1
+- Actin
+- Tubulin
+- Glyceraldehyde-3-phosphate dehydrogenase
+- SuCoA (Succinol Co-enzyme A)
+- FtSH protease
+- 18S (both plants and algae)
+- GADPH
+- 25S rRNA (Plants only)
+- 28S rRNA (*C. reinhardtii*)
+
+To add:
+- actually other housekeeping genes
+
+## Sulfur metabolism gemes
+- SULTR
+- SNRK
+- SAC1 (*C. reinhardtii*)
+- SLT (*C. reinhardtii*)
+- LPB1 (*C. reinhardtii*)
+- SULP
+- ATS
+- SBP
+- APK 
 
 ## Organisms
 - E. salsugineum
@@ -24,6 +50,10 @@
 - M. trunculata
 - S. lycopersicum
 - Z. Mays (Outgroup)
+
+To add:
+- Amborella trichopoda
+- Chlamydomonas reinhardtii
 
 ## Steps:
 1. Download transcriptomes from SRA
@@ -78,3 +108,7 @@
 
 ## Notes:
 * how do we know that these housekeeping genes don't interact with lncRNAs?
+* Are there families of genes close together that modulate Pi homeostasis such as the PHO regulon in bacteria? (The answer is likely: no)
+
+## Phosphate starvation response *C. reinhadrtii*
+- PSR1 (conserved MYB transcription factor)

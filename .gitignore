@@ -26,3 +26,6 @@ test*
 #LaTeX files
 *.log
 *.aux
+
+#Misc output files
+*.gz
