@@ -41,15 +41,17 @@ The focus of the analysis is on *Eutrema salsugineum* so we want to find homolog
 The Phytozome API script will be revised to incorporate the following new features:
 - Instead of only looking in *Arabidopsis* for homologs, you will extend the search of homologs in all of the species listed above. I.e. change the argParse of "A. thaliana" to instead a list of all the organisms, perhaps the arg will be an option to read a file with all the organisms listed:
 - Same thing will happen for looking for FASTA files, you will combined the FASTA of homologs from one gene into one file by appending them to teach other. I.e the FASTA for a gene called RNS1 will have:
-\> Eutrema RNS1
+```
+> Eutrema RNS1
 XXXXXXXXXXX
-\> Arabidopsis RNS1
+> Arabidopsis RNS1
 XXXXXXXXXXX
-\> O. sativa RNS1
+> O. sativa RNS1
 XXXXXXXXXXX
 ...
-\> C. reinhardtii RNS1
+> C. reinhardtii RNS1
 XXXXXXXXXXX
+```
 - The gene list of all *Eutrema* genes is here:
 ```
 /home/lucy/Eutrema/FPKM/droughtName.uniq
@@ -62,4 +64,4 @@ XXXXXXXXXXX
 ```
 samtools faidx 2transcripts.fa <transcript_name> -o transcript_name.fa
 ```
-This runs the FASTA indexing tool on 2transcripts.ca to extract the single FASTA of the name transcript\_name and puts it in a file called transcript\_name.fa
+This runs the FASTA indexing tool on 2transcripts.ca to extract the single FASTA of the name transcript\_name and puts it in a file called transcript\_name.fa. Try it out!!
