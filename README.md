@@ -32,28 +32,30 @@ To add:
 ## Sulfur metabolism gemes
 - SULTR
 - SNRK
-- SAC1 (*C. reinhardtii*)
-- SLT (*C. reinhardtii*)
-- LPB1 (*C. reinhardtii*)
+- ???SAC1 (*C. reinhardtii*)
+- ???SLT (*C. reinhardtii*)
+- ???LPB1 (*C. reinhardtii*)
 - SULP
 - ATS
 - SBP
 - APK 
 
 ## Organisms
-- E. salsugineum
-- A. thaliana
-- O. sativa
-- B. rapa
-- C. rubella
-- B. napus
-- M. trunculata
-- S. lycopersicum
-- Z. Mays (Outgroup)
+- Eutrema salsugineum
+- Arabidopsis thaliana
+- Oryza sativa
+- Brassica rapa
+- Capsella rubella
+- Brassica napus
+- Medicago trunculata
+- Solanum lycopersicum
+- Zea Mays (Outgroup)
 
 To add:
 - Amborella trichopoda
-- Chlamydomonas reinhardtii
+- Chlamydomonas reinhardtii (new outgroup)
+- Solanum tuberosum
+- Selaginella moellendorffii
 
 ## Steps:
 1. Download transcriptomes from SRA
@@ -109,6 +111,28 @@ To add:
 ## Notes:
 * how do we know that these housekeeping genes don't interact with lncRNAs?
 * Are there families of genes close together that modulate Pi homeostasis such as the PHO regulon in bacteria? (The answer is likely: no)
+* \*Update\* Now that I can use Phytozome API, I can find homologs (already annotated)
+* Genes that don't have homologs across all the species then what?
+* At least I have to build a topology from conserved genes among the 
 
 ## Phosphate starvation response *C. reinhadrtii*
 - PSR1 (conserved MYB transcription factor)
+
+## Part 2: API Scripting
+How to use the Python API script
+
+```
+phytozome.py -h
+```
+
+This is a version made for phylogenetic signal analysis
+
+Functions to implement:
+* Finding all the homologous genes (as much as possible)
+* Find the transcript sequences (required for alignment)
+* Possible? Number of exons
+* Counting GC%
+* ORF length (probably through counting the CDS
+* Transcript length (relatively EZ)
+* Will have to keep track of ones that don't have any homologs...(which is a lot)
+* GO analysis to determine what role the transcript has
